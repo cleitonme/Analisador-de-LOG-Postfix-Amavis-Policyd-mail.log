@@ -1,0 +1,70 @@
+<br>
+	
+<font color="blue"><b>
+<hr>
+<center>Informa&ccedil;&otilde;es do usu&aacute;rio</center>
+</b></font>
+<hr>
+<hr>
+<font color="black"><b>
+A partir data:	cat /var/log/mail.log | head -n 1 | awk '{print $2" "$1" "$3}'
+</b></font>
+<hr>
+<font color="black"><b>
+Cota atual envio emails:</b></font>	cat /var/log/mail.log | grep -e "cbpolicyd" | grep " from=email_aqui" | tail -1 | awk '{print $18" "$19" "}'
+<hr>
+<font color="black"><b>
+Lista de E-Mails RECEBIDOS:</b></font>	awk '{print $1,$2,$3,$6,$7}' /var/log/mail.log | egrep -A 3 -w "from" | grep -v "message-id" | grep -v "removed" | grep -v "connect from" | grep -v "client=" | egrep -B 2 -w "to=<email_aqui>" | awk '{print $0}' | awk -F"from=" '{print $2}' | grep "<" | sort | uniq -c | sort -r | tr -d "," | head -20
+<hr>
+<font color="black"><b>
+E-Mails enviados pelo usu&aacute;rio:</b></font>	cat /var/log/mail.log | grep "postfix/submission/smtpd" | grep "Sender address triggers FILTER" | grep " from=<email_aqui> " | awk '{print $2" "$1" "$3" " " ""_frmi_"" "$17"_frmf_"" "$18}'
+<hr>
+<font color="green">
+<hr>
+Resumo de mensagens DEVOLVIDAS:</font>	cat /var/log/mail.log | grep -e "status=bounced" | grep "email_aqui" | awk '{print $0 }'
+<font color="#990000"><b>
+Endere&ccedil;o de remetente recusado:</b></font>	cat /var/log/mail.log | grep "Sender address rejected"  | grep "email_aqui" | awk '{print $2" "$1" "$3" "$10" ""_frmi_"" "$23"_frmf_"" "$24}'
+<hr>
+<font color="black"><b>
+Falhas de autentica&ccedil;&atilde;o:</b></font>	cat /var/log/mail.log | grep "SASL LOGIN authentication failed" | sort -u | grep "email_aqui"
+	cat /var/log/mail.log | grep "auth failed" | sort -u | grep "email_aqui" | awk '{print $2" "$1" "$3" "" " " "" " " " " ""_frmi_"$18"_frmf_" }'
+<hr>
+<font color="black"><b>
+Hosts rejeitados:</b></font>	grep "Client host rejected: cannot find your hostname" /var/log/mail.log | sort -u | grep "email_aqui" | awk '{print $2" "$1" "$3" "$10" ""_frmi_"" "$21"_frmf_"" "$22}'
+<hr>
+
+<font color="black"><b>
+Problemas de RELAY:</b></font>	grep "Relay access denied" /var/log/mail.log | sort -u | grep "email_aqui" | awk '{print $2" "$1" "$3" ""_frmi_"$10"_frmf_"" "$13" "$17" ""_frmi_"$18"_frmf_" }'
+<hr>
+<font color="blue">
+E-Mails em Greylist:</font>	cat /var/log/mail.log | grep "Greylisted" | grep "email_aqui" | awk '{print $2" "$1" "$3" ""_frmi_"$10"_frmf_"" " " " " "$20"_frmi_"$21"_frmf_"}'
+<hr>
+<hr>
+<center><font color="black"><h2>Remetentes BLOQUEADOS em Listas RBL</h2></font></center>
+<hr>
+<hr>
+<font color="red">
+Lista Barracudacentral.org:</font>	grep "blocked using b.barracudacentral.org" /var/log/mail.log | grep "email_aqui" | awk '{print $2" "$1" "$3" ""_frmi_"$10"_frmf_"" " " " " "$23"_frmi_"$22"_frmf_"}'
+<hr>
+<font color="red">
+Lista surriel.com:</font>	grep "blocked using psbl.surriel.com" /var/log/mail.log | grep "email_aqui" | awk '{print $2" "$1" "$3" ""_frmi_"$10"_frmf_"" " " " " "$27"_frmi_"$26"_frmf_"}'
+<hr>
+<font color="red">
+Lista malware.expert:</font>	grep "blocked using rbl.malware.expert" /var/log/mail.log | grep "email_aqui" | awk '{print $2" "$1" "$3" ""_frmi_"$10"_frmf_"" " " " " "$22"_frmi_"$21"_frmf_"}'
+<hr>
+AMAVIS (ANTISPAM/ANTIVIRUS):</font>
+<hr>
+<hr>
+<font color="black"><b>
+A partir data:	cat /var/log/amavis.log | head -n 1 | awk '{print $2" "$1" "$3}'
+</b></font>
+<hr>
+<font color="#990000"><b>
+Email bloqueado com VIRUS</b></font>	cat /var/log/amavis.log | grep "email_aqui" | grep "Blocked INFECTED" | awk '{print $2" "$1" "$3 "   _frmi_" $9 "_frmf_ REMETENTE: "$14 }'
+<hr>
+<font color="#990000"><b>
+Email bloqueado com SPAM</b></font>	cat /var/log/amavis.log | grep "email_aqui" | grep "Blocked SPAM" | awk '{print $2" "$1" "$3 "   _frmi_ Pontuacao: " $21 "_frmf_ REMETENTE: "$13 }'
+<hr>
+<font color="blue"><b>
+Email marcados como SPAM</b></font>	cat /var/log/amavis.log | grep "email_aqui" | grep "Passed SPAMMY" | awk '{print $2" "$1" "$3 "   _frmi_ Pontuacao: " $21 "_frmf_ REMETENTE: "$13 }'
+<hr>
